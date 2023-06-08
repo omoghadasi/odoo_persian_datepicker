@@ -77,7 +77,6 @@ export class PersianDatePicker extends DatePicker {
 
     bootstrapDateTimePicker() {
         return window.$(this.rootRef.el).pDatepicker({
-            position: "auto",
             calendar: {
                 persian: {
                     showHint: true,
@@ -210,3 +209,40 @@ DatePicker.props = {
 };
 
 PersianDatePicker.template = "web.PersianDatePicker";
+
+/**
+ * Date/time picker
+ *
+ * @extends PersianDatePicker
+ */
+export class PersianDateTimePicker extends PersianDatePicker {
+    /**
+     * @override
+     */
+    initFormat() {
+        this.staticFormat = "YYYY/MM/D HH:mm:ss";
+    }
+
+    bootstrapDateTimePicker() {
+        return window.$(this.rootRef.el).pDatepicker({
+            calendar: {
+                persian: {
+                    showHint: true,
+                },
+                gregorian: {
+                    showHint: true
+                }
+            },
+            responsive: true,
+            autoClose: true,
+            timePicker: {
+                enabled: true,
+            },
+            onSelect: this.afterSelectDate.bind(this)
+        });
+    }
+}
+
+DateTimePicker.defaultProps = {
+    ...PersianDatePicker.defaultProps,
+};
