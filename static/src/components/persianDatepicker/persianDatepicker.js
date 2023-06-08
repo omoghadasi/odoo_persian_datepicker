@@ -1,20 +1,6 @@
 /** @odoo-module **/
 import { DatePicker } from "@web/core/datepicker/datepicker";
-
-import {
-    areDateEquals,
-    formatDate,
-    formatDateTime,
-    luxonToMoment,
-    luxonToMomentFormat,
-    momentToLuxon,
-    parseDate,
-    parseDateTime,
-} from "@web/core/l10n/dates";
-import { getActiveHotkey } from "@web/core/hotkeys/hotkey_service";
-import { localization } from "@web/core/l10n/localization";
 import { useAutofocus } from "@web/core/utils/hooks";
-import { isMobileOS } from "@web/core/browser/feature_detection";
 
 import {
     onMounted,
@@ -213,14 +199,84 @@ PersianDatePicker.template = "web.PersianDatePicker";
 /**
  * Date/time picker
  *
- * @extends PersianDatePicker
+ * @extends DatePicker
  */
-export class PersianDateTimePicker extends PersianDatePicker {
+export class PersianDateTimePicker extends DatePicker {
+
     /**
-     * @override
-     */
+ * @override
+*/
+    setup() {
+        this.rootRef = useRef("root");
+        this.inputRef = useRef("input");
+        this.state = useState({ warning: false, pDatepickerObject: null });
+
+        this.datePickerId = `o_datepicker_${datePickerId++}`;
+        // Manually keep track of the "open" state to write the date in the
+        // static format just before bootstrap parses it.
+        this.datePickerShown = false;
+
+        this.initFormat();
+        this.setDateAndFormat(this.props);
+
+        useAutofocus();
+        useExternalListener(window, "scroll", this.onWindowScroll, { capture: true });
+
+        onMounted(this.onMounted);
+        onWillUpdateProps(this.onWillUpdateProps);
+        onWillUnmount(this.onWillUnmount);
+    }
+
+    /**
+    * Initialises formatting and parsing parameters
+    */
     initFormat() {
-        this.staticFormat = "YYYY/MM/D HH:mm:ss";
+        this.staticFormat = 'YYYY/MM/D HH:mm:ss';
+        this.formatValue = this.formatDate;
+        this.parseValue = this.parseDate;
+        this.isLocal = false;
+    }
+
+    onMounted() {
+        this.state.pDatepickerObject = this.bootstrapDateTimePicker();
+        this.updateInput();
+    }
+
+    onWillUpdateProps(nextProps) {
+    }
+
+    onWillUnmount() {
+        this.state.pDatepickerObject.destroy();
+        window.$(this.rootRef.el).off(); // Removes all jQuery events
+    }
+
+
+    /**
+    * Updates the input element with the current formatted date value.
+    * @param {Object} [params={}]
+    * @param {boolean} [params.useStatic]
+    */
+    updateInput({ useStatic } = {}) {
+        if (this.date.ts && this.format) {
+            persianDate.toLocale('en');
+            let currentDate = new persianDate.unix(this.date.ts / 1000).format(this.format);
+            this.inputRef.el.value = currentDate;
+            this.props.onUpdateInput(currentDate);
+        }
+    }
+
+    /**
+    * Sets the current date value. If a locale is provided, the given date
+    *  will first be set in that locale.
+    * @param {Object} params
+    * @param {DateTime} params.date
+    * @param {string} [params.locale]
+    * @param {string} [params.format]
+    */
+    setDateAndFormat({ date, locale, format }) {
+        this.date = date && locale ? date.setLocale(locale) : date;
+        // Fallback to default localization format in `@web/core/l10n/dates.js`.
+        this.format = format || this.staticFormat;
     }
 
     bootstrapDateTimePicker() {
@@ -241,8 +297,37 @@ export class PersianDateTimePicker extends PersianDatePicker {
             onSelect: this.afterSelectDate.bind(this)
         });
     }
+
+    afterSelectDate(unixDate) {
+        persianDate.toLocale('en');
+        let nowPersianDate = new persianDate.unix(unixDate / 1000)
+        this.date = {
+            ...this.date,
+            ts: unixDate,
+            c: {
+                year: nowPersianDate.year(),
+                month: nowPersianDate.month(),
+                day: nowPersianDate.date()
+            }
+        }
+        this.updateInput()
+        this.props.date.c = {
+            year: nowPersianDate.toCalendar('gregorian').year(),
+            month: nowPersianDate.toCalendar('gregorian').month(),
+            day: nowPersianDate.toCalendar('gregorian').date()
+        }
+        this.props.date.ts = unixDate
+        this.props.onDateTimeChanged(this.props.date);
+        console.log(this.props)
+    }
+
+    onInputClick() {
+
+    }
 }
 
-DateTimePicker.defaultProps = {
+PersianDateTimePicker.template = "web.PersianDatePicker";
+
+PersianDateTimePicker.defaultProps = {
     ...PersianDatePicker.defaultProps,
 };

@@ -16,6 +16,7 @@
             '/persian_datepicker/static/lib/**/*',
             '/persian_datepicker/static/src/components/persianDatepicker/**/*',
             '/persian_datepicker/static/src/components/persianDateField/**/*',
+            '/persian_datepicker/static/src/components/persianDateTimeField/**/*',
         ],
     },
     'installable': True,
