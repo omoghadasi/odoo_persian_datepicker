@@ -63,7 +63,7 @@ export class PersianDatePicker extends DatePicker {
     }
 
     onMounted() {
-        this.state.pDatepickerObject = this.bootstrapDateTimePicker(this.props);
+        this.state.pDatepickerObject = this.bootstrapDateTimePicker();
         this.updateInput();
     }
 
@@ -76,7 +76,20 @@ export class PersianDatePicker extends DatePicker {
     }
 
     bootstrapDateTimePicker() {
-        return window.$(this.rootRef.el).pDatepicker({ autoClose: true, onSelect: this.afterSelectDate.bind(this) });
+        return window.$(this.rootRef.el).pDatepicker({
+            position: "auto",
+            calendar: {
+                persian: {
+                    showHint: true,
+                },
+                gregorian: {
+                    showHint: true
+                }
+            },
+            responsive: true,
+            autoClose: true,
+            onSelect: this.afterSelectDate.bind(this)
+        });
     }
 
     /**
@@ -85,10 +98,12 @@ export class PersianDatePicker extends DatePicker {
     * @param {boolean} [params.useStatic]
     */
     updateInput({ useStatic } = {}) {
-        persianDate.toLocale('en');
-        let currentDate = new persianDate.unix(this.date.ts / 1000).format(this.format);
-        this.inputRef.el.value = currentDate;
-        this.props.onUpdateInput(currentDate);
+        if (this.date.ts && this.format) {
+            persianDate.toLocale('en');
+            let currentDate = new persianDate.unix(this.date.ts / 1000).format(this.format);
+            this.inputRef.el.value = currentDate;
+            this.props.onUpdateInput(currentDate);
+        }
     }
 
     /**
@@ -153,7 +168,7 @@ DatePicker.defaultProps = {
 DatePicker.props = {
     // Components props
     onDateTimeChanged: Function,
-    date: { type: Object, optional: true },
+    date: { type: [Object, { value: false }], optional: true },
     warn_future: { type: Boolean, optional: true },
     // Bootstrap datepicker options
     buttons: {
