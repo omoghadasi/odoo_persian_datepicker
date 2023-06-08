@@ -32,7 +32,6 @@ export class PersianDatePicker extends DatePicker {
      * @override
     */
     setup() {
-        console.log('setup datepicker')
         this.rootRef = useRef("root");
         this.inputRef = useRef("input");
         this.state = useState({ warning: false, pDatepickerObject: null });
@@ -48,7 +47,6 @@ export class PersianDatePicker extends DatePicker {
         useAutofocus();
         useExternalListener(window, "scroll", this.onWindowScroll, { capture: true });
 
-
         onMounted(this.onMounted);
         onWillUpdateProps(this.onWillUpdateProps);
         onWillUnmount(this.onWillUnmount);
@@ -58,7 +56,7 @@ export class PersianDatePicker extends DatePicker {
     * Initialises formatting and parsing parameters
     */
     initFormat() {
-        this.staticFormat = "yyyy/MM/dd";
+        this.staticFormat = 'YYYY/MM/D';
         this.formatValue = this.formatDate;
         this.parseValue = this.parseDate;
         this.isLocal = false;
@@ -67,30 +65,9 @@ export class PersianDatePicker extends DatePicker {
     onMounted() {
         this.state.pDatepickerObject = this.bootstrapDateTimePicker(this.props);
         this.updateInput();
-
-        // window.$(this.rootRef.el).on("show.datetimepicker", () => {
-        //     this.datePickerShown = true;
-        //     this.inputRef.el.select();
-        // });
-        // window.$(this.rootRef.el).on("hide.datetimepicker", ({ date }) => {
-        //     this.datePickerShown = false;
-        //     this.onDateChange({ eventDate: date, useStatic: true });
-        // });
-        // window.$(this.rootRef.el).on("error.datetimepicker", () => false);
     }
 
     onWillUpdateProps(nextProps) {
-        // const pickerParams = {};
-        // for (const prop in nextProps) {
-        //     if (!areDateEquals(this.props[prop], nextProps[prop])) {
-        //         pickerParams[prop] = nextProps[prop];
-        //     }
-        // }
-        // this.setDateAndFormat(nextProps);
-        // if ("date" in pickerParams || "format" in pickerParams) {
-        //     this.updateInput();
-        // }
-        // this.bootstrapDateTimePicker(pickerParams);
     }
 
     onWillUnmount() {
@@ -108,7 +85,8 @@ export class PersianDatePicker extends DatePicker {
     * @param {boolean} [params.useStatic]
     */
     updateInput({ useStatic } = {}) {
-        let currentDate = new persianDate.unix(this.date.ts / 1000).format();
+        persianDate.toLocale('en');
+        let currentDate = new persianDate.unix(this.date.ts / 1000).format(this.format);
         this.inputRef.el.value = currentDate;
         this.props.onUpdateInput(currentDate);
     }
