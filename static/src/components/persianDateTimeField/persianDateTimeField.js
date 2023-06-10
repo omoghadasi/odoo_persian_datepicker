@@ -5,6 +5,7 @@ import { PersianDateTimePicker } from "../persianDatepicker/persianDatepicker";
 import { areDateEquals } from "@web/core/l10n/dates";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { registry } from "@web/core/registry";
+import { _lt } from "@web/core/l10n/translation";
 
 export class PersianDateTimeField extends DateTimeField {
     setup() {
