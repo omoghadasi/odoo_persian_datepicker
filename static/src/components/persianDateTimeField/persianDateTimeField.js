@@ -2,7 +2,7 @@
 
 import { DateTimeField } from "@web/views/fields/datetime/datetime_field";
 import { PersianDateTimePicker } from "../persianDatepicker/persianDatepicker";
-import { areDateEquals, formatDateTime } from "@web/core/l10n/dates";
+import { areDateEquals } from "@web/core/l10n/dates";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { registry } from "@web/core/registry";
 
