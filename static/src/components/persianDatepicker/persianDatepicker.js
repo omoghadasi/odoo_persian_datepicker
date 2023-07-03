@@ -11,6 +11,8 @@ import {
     useState,
 } from "@odoo/owl";
 
+const { DateTime } = luxon;
+
 let datePickerId = 0;
 
 export class PersianDatePicker extends DatePicker {
@@ -118,13 +120,15 @@ export class PersianDatePicker extends DatePicker {
             }
         }
         this.updateInput()
-        this.props.date.c = {
+        let propsDate = {
             year: nowPersianDate.toCalendar('gregorian').year(),
             month: nowPersianDate.toCalendar('gregorian').month(),
-            day: nowPersianDate.toCalendar('gregorian').date()
+            day: nowPersianDate.toCalendar('gregorian').date(),
+            hour: nowPersianDate.toCalendar('gregorian').hour(),
+            minute: nowPersianDate.toCalendar('gregorian').minute(),
+            second: nowPersianDate.toCalendar('gregorian').second()
         }
-        this.props.date.ts = unixDate
-        this.props.onDateTimeChanged(this.props.date);
+        this.props.onDateTimeChanged(DateTime.utc(propsDate.year, propsDate.month, propsDate.day, propsDate.hour, propsDate.minute, propsDate.second));
     }
     onInputClick() {
 
@@ -150,7 +154,7 @@ DatePicker.defaultProps = {
     onInput: () => { },
     onUpdateInput: () => { },
 };
-DatePicker.props = {
+PersianDatePicker.props = {
     // Components props
     onDateTimeChanged: Function,
     date: { type: [Object, { value: false }], optional: true },

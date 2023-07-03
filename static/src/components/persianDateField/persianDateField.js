@@ -5,7 +5,7 @@ import { PersianDatePicker } from "../persianDatepicker/persianDatepicker";
 import { areDateEquals } from "@web/core/l10n/dates";
 import { _lt } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
-import { standardFieldProps } from "../standard_field_props";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
 
 export class PersianDateField extends DateField {
     setup() {
@@ -14,6 +14,7 @@ export class PersianDateField extends DateField {
          * Not changed in case of invalid field value.
          */
         this.lastSetValue = null;
+        console.log('PersianDateField ssssssssss')
     }
     get isDateTime() {
         return this.props.record.fields[this.props.name].type === "datetime";
@@ -27,9 +28,7 @@ export class PersianDateField extends DateField {
     }
 
     onDateTimeChanged(date) {
-        if (!areDateEquals(this.date || "", date)) {
-            this.props.update(date);
-        }
+        this.props.update(date)
     }
     onDatePickerInput(ev) {
         this.props.setDirty(ev.target.value !== this.lastSetValue);
@@ -54,7 +53,7 @@ PersianDateField.defaultProps = {
 };
 
 PersianDateField.displayName = _lt("Date");
-PersianDateField.supportedTypes = ["date", "datetime"];
+// PersianDateField.supportedTypes = ["date", "datetime"];
 
 PersianDateField.extractProps = ({ attrs }) => {
     return {
@@ -65,3 +64,4 @@ PersianDateField.extractProps = ({ attrs }) => {
 
 registry.category("fields").remove("date");
 registry.category("fields").add("date", PersianDateField);
+
