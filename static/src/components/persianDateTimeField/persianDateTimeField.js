@@ -16,7 +16,10 @@ export class PersianDateTimeField extends DateTimeField {
         this.lastSetValue = null;
     }
     get formattedValue() {
-        return new persianDate.unix(this.props.value.ts / 1000).format('YYYY/MM/D HH:mm:ss');
+        if (this.props.value.ts) {
+            return new persianDate.unix(this.props.value.ts / 1000).format('YYYY/MM/D HH:mm:ss');
+        }
+        return ''
     }
 
     onDateTimeChanged(date) {
