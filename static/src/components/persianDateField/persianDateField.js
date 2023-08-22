@@ -24,7 +24,11 @@ export class PersianDateField extends DateField {
     }
 
     get formattedValue() {
-        return new persianDate.unix(this.props.value.ts / 1000).format('YYYY/MM/D');
+        if (this.props.value.ts) {
+            return new persianDate.unix(this.props.value.ts / 1000).format('YYYY/MM/D');
+        } else {
+            return ''
+        }
     }
 
     onDateTimeChanged(date) {
